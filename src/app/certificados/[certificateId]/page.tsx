@@ -31,8 +31,8 @@ export default async function Certificate({
 
   if (!data?.certificate) {
     return (
-      <section className="mx-auto flex min-h-[calc(100vh-10rem)] w-full max-w-screen-xl flex-col gap-6 px-4 py-8 xl:px-0">
-        <div className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-lg">
+      <section className="mx-auto flex min-h-[calc(100vh-10rem)] w-full max-w-screen-xl flex-col gap-4 px-4 py-4 sm:gap-6 sm:py-8 xl:px-0">
+        <div className="flex flex-col gap-4 rounded-lg bg-white p-4 shadow-lg sm:p-6">
           <div>
             <div className="mb-4">
               <Link
@@ -56,9 +56,9 @@ export default async function Certificate({
   }
 
   return (
-    <section className="mx-auto flex min-h-[calc(100vh-10rem)] w-full max-w-screen-xl flex-col gap-6 px-4 py-8 xl:px-0">
+    <section className="mx-auto flex min-h-[calc(100vh-10rem)] w-full max-w-screen-xl flex-col gap-4 px-4 py-4 sm:gap-6 sm:py-8 xl:px-0">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-lg sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-lg bg-white p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div>
           <div className="mb-4">
             <Link
@@ -76,7 +76,7 @@ export default async function Certificate({
       </div>
 
       {/* Certificate Preview Section */}
-      <div className="rounded-lg bg-white p-6 shadow-lg">
+      <div className="rounded-lg bg-white p-3 shadow-lg sm:p-6">
         <CertificateTemplate
           certificate={data.certificate}
           certificateNumber={params.certificateId}

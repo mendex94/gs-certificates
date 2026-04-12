@@ -5,6 +5,7 @@ import {
   integer,
   varchar,
   timestamp,
+  boolean,
   foreignKey,
   unique,
 } from 'drizzle-orm/pg-core';
@@ -58,6 +59,8 @@ export const certificates = pgTable(
     tokenHash: varchar('tokenHash', { length: 64 }).primaryKey().notNull(),
     encryptedData: varchar('encryptedData', { length: 1000 }).notNull(),
     issuedAt: timestamp('issuedAt', { precision: 3, mode: 'date' }).notNull(),
+    generatedAt: timestamp('generatedAt', { precision: 3, mode: 'date' }),
+    tokenConsumed: boolean('tokenConsumed').default(false).notNull(),
     userId: integer('user_id').notNull(),
     type: certificateType().default('higienizacao').notNull(),
     product: products(),

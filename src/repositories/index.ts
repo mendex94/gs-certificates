@@ -3,7 +3,13 @@ import { CertificateDTO } from '@/dtos/certificate';
 
 export interface ICertificatesRepository {
   createCertificate(certificate: CertificateDTO): Promise<CertificateDTO>;
-  retrieveCertificateById(certificateId: string): Promise<CertificateDTO>;
+  retrieveCertificateById(
+    certificateId: string,
+  ): Promise<CertificateDTO | null>;
+  consumeGenerationToken(
+    certificateId: string,
+    userId: number,
+  ): Promise<boolean>;
 }
 
 export interface IUsersRepository {

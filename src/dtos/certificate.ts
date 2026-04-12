@@ -11,6 +11,8 @@ export class CertificateDTO {
   private _tokenHash: string;
   private _encryptedData: string;
   private _issuedAt: Date;
+  private _generatedAt: Date | null;
+  private _tokenConsumed: boolean;
   private _userId: number;
   private _type: TokenType;
   private _product: Products | null;
@@ -19,6 +21,8 @@ export class CertificateDTO {
     tokenHash: string,
     encryptedData: string,
     issuedAt: Date,
+    generatedAt: Date | null,
+    tokenConsumed: boolean,
     userId: number,
     type: TokenType,
     product: Products,
@@ -26,6 +30,8 @@ export class CertificateDTO {
     this._tokenHash = tokenHash;
     this._encryptedData = encryptedData;
     this._issuedAt = issuedAt;
+    this._generatedAt = generatedAt;
+    this._tokenConsumed = tokenConsumed;
     this._userId = userId;
     this._type = type;
     this._product = product;
@@ -41,6 +47,14 @@ export class CertificateDTO {
 
   get issuedAt() {
     return this._issuedAt;
+  }
+
+  get generatedAt() {
+    return this._generatedAt;
+  }
+
+  get tokenConsumed() {
+    return this._tokenConsumed;
   }
 
   get userId() {
@@ -59,6 +73,8 @@ export class CertificateDTO {
     tokenHash: string;
     encryptedData: string;
     issuedAt: Date;
+    generatedAt: Date | null;
+    tokenConsumed: boolean;
     userId: number;
     type: TokenType;
     product: Products;
@@ -67,6 +83,8 @@ export class CertificateDTO {
       data.tokenHash,
       data.encryptedData,
       data.issuedAt,
+      data.generatedAt,
+      data.tokenConsumed,
       data.userId,
       data.type,
       data.product,

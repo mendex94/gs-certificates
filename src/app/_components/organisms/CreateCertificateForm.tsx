@@ -48,7 +48,6 @@ export default function CreateCertificateForm({
 }: {
   type: 'higienizacao' | 'impermeabilizacao';
 }) {
-  console.log(type);
   const router = useRouter();
   const queryClient = useQueryClient();
   const { toast } = useToast();

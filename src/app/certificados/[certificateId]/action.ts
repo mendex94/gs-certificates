@@ -4,7 +4,8 @@
 import { createServerAction } from 'zsa';
 import { z } from 'zod';
 import { CertificatesService } from '@/services/certificatesService';
-import { env } from '@/utils/env';
+import { authenticatedProcedure } from '@/lib/zsa-procedures';
+import { logError, logInfo } from '@/utils/logger';
 
 export const retrieveCertificateById = createServerAction()
   .input(
@@ -24,39 +25,49 @@ export const retrieveCertificateById = createServerAction()
     };
   });
 
-export const generateCertificatePDF = createServerAction()
+export const generateCertificatePDF = authenticatedProcedure
+  .createServerAction()
   .input(
     z.object({
       certificateId: z.string(),
     }),
   )
-  .handler(async ({ input }) => {
+  .handler(async ({ input, ctx }) => {
+    const correlationId = crypto.randomUUID();
     const { certificateId } = input;
-    const html2pdfUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://html2pdf-nu.vercel.app/api/generate'
-        : 'http://localhost:3001/api/generate';
+
+    if (!ctx.userId) {
+      throw new Error('Nao autorizado!');
+    }
 
     try {
-      const response = await fetch(html2pdfUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${env.JWT_SECRET}`,
-        },
-        body: JSON.stringify({
-          url: `${process.env.NEXT_PUBLIC_APP_URL}/certificados/${certificateId}/print`,
-        }),
+      logInfo('certificate_pdf_generation_started', correlationId, {
+        certificateId,
+        userId: ctx.userId,
       });
 
-      const pdfBuffer = await response.arrayBuffer();
-      const uint8Array = new Uint8Array(pdfBuffer);
+      const certificateService = new CertificatesService();
+      const pdfBuffer = await certificateService.generateCertificatePdf(
+        certificateId,
+        ctx.userId,
+      );
+
+      logInfo('certificate_pdf_generation_finished', correlationId, {
+        certificateId,
+        userId: ctx.userId,
+        bytes: pdfBuffer.length,
+      });
 
       return {
-        pdf: Array.from(uint8Array),
+        mimeType: 'application/pdf',
+        fileName: `${certificateId}-certificado.pdf`,
+        pdf: Array.from(pdfBuffer),
       };
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      logError('certificate_pdf_generation_failed', correlationId, error, {
+        certificateId,
+        userId: ctx.userId,
+      });
       throw error;
     }
   });

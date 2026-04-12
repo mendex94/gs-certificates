@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1776016586762,
+      "tag": "0006_bouncy_mysterio",
+      "breakpoints": true
+    }
+  ]
+}
