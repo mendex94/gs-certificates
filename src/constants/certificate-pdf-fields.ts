@@ -38,6 +38,6 @@ export const REQUIRED_PDF_FIELDS_BY_TYPE: Record<TokenType, readonly string[]> =
   };
 
 export const CERTIFICATE_PDF_TEMPLATE_FILES: Record<TokenType, string> = {
-  higienizacao: 'template-higienizacao.pdf',
-  impermeabilizacao: 'template-impermeabilizacao.pdf',
+  higienizacao: 'pdf-templates/template-higienizacao.pdf',
+  impermeabilizacao: 'pdf-templates/template-impermeabilizacao.pdf',
 };

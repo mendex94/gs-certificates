@@ -24,13 +24,13 @@ type TGenerateCertificatePdfInput = {
 export class CertificatePdfService {
   private async loadTemplateByType(type: TokenType) {
     const templateFileName = CERTIFICATE_PDF_TEMPLATE_FILES[type];
-    const templatePath = join(process.cwd(), templateFileName);
+    const templatePath = join(process.cwd(), 'public', templateFileName);
 
     try {
       return await readFile(templatePath);
     } catch {
       throw new Error(
-        `Template PDF nao encontrado na raiz do projeto: ${templateFileName}`,
+        `Template PDF nao encontrado na pasta public: ${templateFileName}`,
       );
     }
   }
