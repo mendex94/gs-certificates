@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Download,
   ExternalLink,
-  RefreshCw,
 } from 'lucide-react';
 import logo from '@assets/logo.svg';
 import { generateCertificatePDF } from '@/app/certificados/[certificateId]/action';
