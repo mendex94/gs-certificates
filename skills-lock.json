@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "implementation-contract-review-harness": {
+      "source": "glaucia86/skills",
+      "sourceType": "github",
+      "computedHash": "47b55371858442cb2f15222dadefad39d9f76016df1be3f294238fffa23c64ce"
+    },
+    "implementation-readiness-gate": {
+      "source": "glaucia86/skills",
+      "sourceType": "github",
+      "computedHash": "fb105a4d0f7406837d81a08396dc75fd0de1f811b7621244eb100186d6e19e97"
+    },
+    "review-to-release-workflow": {
+      "source": "glaucia86/skills",
+      "sourceType": "github",
+      "computedHash": "e942c7d26d07d45de9f8e0406be485cc7b30865d6d0a36d9674aff18bb3d0e5e"
+    },
+    "task-clarification-harness": {
+      "source": "glaucia86/skills",
+      "sourceType": "github",
+      "computedHash": "1e4dc492ced98282c55371d425082d38a1a572064affbb21f8561a2b6863e589"
+    }
+  }
+}
