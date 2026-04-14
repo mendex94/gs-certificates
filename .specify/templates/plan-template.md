@@ -29,16 +29,16 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - [ ] Qualidade de codigo: plano descreve estrategia para manter tipagem,
-  padroes existentes, eliminacao de hardcode de dominio e gates de lint/build.
+      padroes existentes, eliminacao de hardcode de dominio e gates de lint/build.
 - [ ] Consistencia de UX: plano cobre componentes compartilhados, estados
-  loading/vazio/erro/sucesso, responsividade e acessibilidade minima.
+      loading/vazio/erro/sucesso, responsividade e acessibilidade minima.
 - [ ] Performance: plano define orcamento mensuravel e metodo de validacao para
-  Web Vitals e/ou latencia de API em fluxos criticos.
+      Web Vitals e/ou latencia de API em fluxos criticos.
 - [ ] Risco e regressao: plano explicita riscos, estrategia de verificacao e
-  evidencias obrigatorias para aprovacao do PR.
+      evidencias obrigatorias para aprovacao do PR.
 
 ## Project Structure
 
@@ -55,6 +55,7 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
+
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
@@ -105,7 +106,7 @@ directories captured above]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

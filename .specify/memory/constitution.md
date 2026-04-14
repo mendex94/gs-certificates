@@ -27,6 +27,7 @@ Sync Impact Report
 ## Core Principles
 
 ### I. Qualidade de Codigo Nao Negociavel
+
 Toda mudanca MUST preservar legibilidade, tipagem forte e baixo acoplamento.
 Alteracoes MUST reutilizar padroes existentes e MUST evitar strings de dominio
 hardcoded, preferindo constantes ou enums tipados. Antes de merge, toda mudanca
@@ -34,6 +35,7 @@ MUST passar em `pnpm lint` e `pnpm build`.
 Justificativa: consistencia tecnica reduz regressao e custo de manutencao.
 
 ### II. Consistencia de Experiencia do Usuario
+
 Fluxos de UI MUST usar componentes compartilhados e linguagem visual existente.
 Toda interface nova ou alterada MUST cobrir estados de carregamento, vazio, erro
 e sucesso, com comportamento responsivo em mobile e desktop. Mudancas visuais
@@ -42,6 +44,7 @@ navegacao por teclado.
 Justificativa: previsibilidade da experiencia aumenta confianca e reduz friccao.
 
 ### III. Performance Como Requisito de Entrega
+
 Toda entrega MUST definir impacto esperado de performance e validar o resultado
 nos fluxos criticos. Para paginas publicas, mudancas MUST manter alvo de
 LCP p75 <= 2.5s e INP p75 <= 200ms. Para operacoes de API criticas, mudancas
@@ -50,6 +53,7 @@ documentada e aprovada.
 Justificativa: performance impacta conversao, retencao e custo operacional.
 
 ### IV. Verificacao Continua e Prevencao de Regressao
+
 Toda correcao de bug MUST incluir verificacao proporcional ao risco, por teste
 automatizado ou evidencia reproduzivel documentada quando automacao nao for
 viavel. Alteracoes em contratos, validacoes e persistencia MUST demonstrar
@@ -57,6 +61,7 @@ compatibilidade retroativa ou plano de migracao seguro.
 Justificativa: validacao continua evita regressao silenciosa em producao.
 
 ### V. Entrega Incremental com Rastreabilidade
+
 Mudancas MUST ser entregues em incrementos pequenos, revisaveis e reversiveis.
 Cada PR MUST descrever escopo, risco, decisoes tecnicas e evidencias de
 qualidade, UX e performance. Excecoes a esta constituicao MUST ser temporarias,
@@ -66,24 +71,24 @@ Justificativa: entregas incrementais aceleram a evolucao com governanca.
 ## Padroes Tecnicos Obrigatorios
 
 - TypeScript strict MUST permanecer habilitado e novos usos de `any` MUST ser
-	evitados ou justificados no PR.
+  evitados ou justificados no PR.
 - Validacoes de entrada MUST ser centralizadas e reutilizaveis, evitando logica
-	duplicada em componentes, servicos e handlers.
+  duplicada em componentes, servicos e handlers.
 - Componentes de UI MUST priorizar composicao sobre duplicacao e manter
-	consistencia com o sistema de design existente.
+  consistencia com o sistema de design existente.
 - Mudancas de consulta, serializacao e geracao de PDF MUST considerar impacto de
-	latencia e consumo de recursos antes de merge.
+  latencia e consumo de recursos antes de merge.
 
 ## Fluxo de Entrega e Quality Gates
 
 - Especificacoes MUST declarar requisitos nao funcionais de qualidade, UX e
-	performance para cada historia relevante.
+  performance para cada historia relevante.
 - Planos de implementacao MUST passar pelo Constitution Check antes de iniciar
-	codificacao.
+  codificacao.
 - Antes do merge, o autor MUST anexar evidencias de execucao de `pnpm lint` e
-	`pnpm build` e, quando aplicavel, evidencias de medicao de performance.
+  `pnpm build` e, quando aplicavel, evidencias de medicao de performance.
 - Revisao tecnica MUST bloquear merge quando houver violacao de principios sem
-	excecao formal aprovada.
+  excecao formal aprovada.
 
 ## Governance
 
