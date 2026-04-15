@@ -17,10 +17,10 @@
 
 **Purpose**: Prepare feature module structure and shared constants for implementation
 
-- [X] T001 Create dashboard feature placeholders in `src/app/dashboard/certificate-types/page.tsx` and `src/app/dashboard/certificate-types/action.ts`
-- [X] T002 Create shared constants for lifecycle, storage mode, and domain errors in `src/constants/certificate-management.ts`
-- [X] T003 [P] Add environment accessors for fallback cutoff/backfill configuration in `src/utils/env.ts`
-- [X] T004 [P] Add repository/service export placeholders for admin feature modules in `src/repositories/index.ts` and `src/services/index.ts`
+- [x] T001 Create dashboard feature placeholders in `src/app/dashboard/certificate-types/page.tsx` and `src/app/dashboard/certificate-types/action.ts`
+- [x] T002 Create shared constants for lifecycle, storage mode, and domain errors in `src/constants/certificate-management.ts`
+- [x] T003 [P] Add environment accessors for fallback cutoff/backfill configuration in `src/utils/env.ts`
+- [x] T004 [P] Add repository/service export placeholders for admin feature modules in `src/repositories/index.ts` and `src/services/index.ts`
 
 ---
 
@@ -30,19 +30,19 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [X] T005 Extend relational schema for `certificate_types`, `certificate_templates`, and migration policy fields in `src/lib/db/schema.ts`
-- [X] T006 Create migration for certificate type/template metadata and indexes in `drizzle/migrations/0007_admin_certificate_templates.sql`
-- [X] T007 [P] Create admin DTOs for certificate types and templates in `src/dtos/certificate-type.ts` and `src/dtos/certificate-template.ts`
-- [X] T008 [P] Implement certificate type repository lifecycle queries in `src/repositories/certificateTypesRepository.ts`
-- [X] T009 [P] Implement certificate template repository version/reference queries in `src/repositories/certificateTemplatesRepository.ts`
-- [X] T010 Implement active-reference aggregation (any-status certificates + pending requests) in `src/repositories/certificatesRepository.ts`
-- [X] T011 Implement storage compatibility probe and UUID path helper in `src/services/templateStorageService.ts`
-- [X] T012 Implement incremental backfill and cutoff enforcement in `src/services/templateBackfillService.ts`
-- [X] T013 Implement orchestration rules (archive/inactivate/delete + last-write-wins) in `src/services/certificateTypeAdminService.ts`
-- [X] T014 Add zod schemas for all admin certificate management actions in `src/app/_lib/validation-shemas/certificate-management.ts`
-- [X] T015 Add authenticated server actions for type/template lifecycle operations in `src/app/dashboard/certificate-types/action.ts`
-- [X] T016 Add `getLegacyBackfillStatus` and `runLegacyBackfillBatch` actions in `src/app/dashboard/certificate-types/action.ts`
-- [X] T017 Implement valid upload-attempt classification helper for SC-003 denominator in `src/services/templateStorageService.ts`
+- [x] T005 Extend relational schema for `certificate_types`, `certificate_templates`, and migration policy fields in `src/lib/db/schema.ts`
+- [x] T006 Create migration for certificate type/template metadata and indexes in `drizzle/migrations/0007_admin_certificate_templates.sql`
+- [x] T007 [P] Create admin DTOs for certificate types and templates in `src/dtos/certificate-type.ts` and `src/dtos/certificate-template.ts`
+- [x] T008 [P] Implement certificate type repository lifecycle queries in `src/repositories/certificateTypesRepository.ts`
+- [x] T009 [P] Implement certificate template repository version/reference queries in `src/repositories/certificateTemplatesRepository.ts`
+- [x] T010 Implement active-reference aggregation (any-status certificates + pending requests) in `src/repositories/certificatesRepository.ts`
+- [x] T011 Implement storage compatibility probe and UUID path helper in `src/services/templateStorageService.ts`
+- [x] T012 Implement incremental backfill and cutoff enforcement in `src/services/templateBackfillService.ts`
+- [x] T013 Implement orchestration rules (archive/inactivate/delete + last-write-wins) in `src/services/certificateTypeAdminService.ts`
+- [x] T014 Add zod schemas for all admin certificate management actions in `src/app/_lib/validation-shemas/certificate-management.ts`
+- [x] T015 Add authenticated server actions for type/template lifecycle operations in `src/app/dashboard/certificate-types/action.ts`
+- [x] T016 Add `getLegacyBackfillStatus` and `runLegacyBackfillBatch` actions in `src/app/dashboard/certificate-types/action.ts`
+- [x] T017 Implement valid upload-attempt classification helper for SC-003 denominator in `src/services/templateStorageService.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -56,15 +56,15 @@
 
 ### Implementation for User Story 1
 
-- [X] T018 [US1] Implement `listCertificateTypes` and `createCertificateType` handlers in `src/app/dashboard/certificate-types/action.ts`
-- [X] T019 [US1] Implement `updateCertificateType` handler with slug normalization/edit-before-save rules in `src/app/dashboard/certificate-types/action.ts`
-- [X] T020 [US1] Implement `deleteCertificateType` handler returning `archived|deleted` with reference summary in `src/app/dashboard/certificate-types/action.ts`
-- [X] T021 [P] [US1] Create certificate type table UI with loading/empty/error/success states in `src/app/_components/organisms/CertificateTypeTable.tsx`
-- [X] T022 [P] [US1] Create certificate type create/edit form with required/optional fields in `src/app/_components/organisms/CertificateTypeForm.tsx`
-- [X] T023 [US1] Compose certificate type management page and data-refresh flow in `src/app/dashboard/certificate-types/page.tsx`
-- [X] T024 [US1] Add navigation entry from admin dashboard in `src/app/dashboard/page.tsx`
-- [X] T025 [US1] Add action feedback mapping (success/validation/failure) in `src/app/dashboard/certificate-types/page.tsx`
-- [X] T026 [US1] Update independent validation steps for type lifecycle and SC-006 evidence in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T018 [US1] Implement `listCertificateTypes` and `createCertificateType` handlers in `src/app/dashboard/certificate-types/action.ts`
+- [x] T019 [US1] Implement `updateCertificateType` handler with slug normalization/edit-before-save rules in `src/app/dashboard/certificate-types/action.ts`
+- [x] T020 [US1] Implement `deleteCertificateType` handler returning `archived|deleted` with reference summary in `src/app/dashboard/certificate-types/action.ts`
+- [x] T021 [P] [US1] Create certificate type table UI with loading/empty/error/success states in `src/app/_components/organisms/CertificateTypeTable.tsx`
+- [x] T022 [P] [US1] Create certificate type create/edit form with required/optional fields in `src/app/_components/organisms/CertificateTypeForm.tsx`
+- [x] T023 [US1] Compose certificate type management page and data-refresh flow in `src/app/dashboard/certificate-types/page.tsx`
+- [x] T024 [US1] Add navigation entry from admin dashboard in `src/app/dashboard/page.tsx`
+- [x] T025 [US1] Add action feedback mapping (success/validation/failure) in `src/app/dashboard/certificate-types/page.tsx`
+- [x] T026 [US1] Update independent validation steps for type lifecycle and SC-006 evidence in `specs/001-admin-certificate-templates/quickstart.md`
 
 **Checkpoint**: User Story 1 is independently functional and testable
 
@@ -78,16 +78,16 @@
 
 ### Implementation for User Story 2
 
-- [X] T027 [US2] Implement `uploadCertificateTemplate` action preconditions for direct upload and valid file in `src/app/dashboard/certificate-types/action.ts`
-- [X] T028 [US2] Implement UUID-per-type file persistence (`/public/pdf-templates/{typeId}/{uuid}.pdf`) in `src/services/templateStorageService.ts`
-- [X] T029 [US2] Implement `replaceActiveTemplate` lifecycle rule (single active template per type) in `src/services/certificateTypeAdminService.ts`
-- [X] T030 [US2] Implement `deleteCertificateTemplate` lifecycle with active-reference checks in `src/services/certificateTypeAdminService.ts`
-- [X] T031 [US2] Update certificate PDF resolution to metadata path with temporary legacy fallback in `src/services/certificatePdfService.ts`
-- [X] T032 [P] [US2] Create template upload/replace component with validation feedback in `src/app/_components/organisms/CertificateTemplateUpload.tsx`
-- [X] T033 [P] [US2] Create template list/history component with archive/delete actions in `src/app/_components/organisms/CertificateTemplateList.tsx`
-- [X] T034 [US2] Integrate template management section into certificate type page in `src/app/dashboard/certificate-types/page.tsx`
-- [X] T035 [US2] Emit telemetry markers for SC-003 valid-attempt denominator in `src/app/dashboard/certificate-types/action.ts` and `src/utils/logger.ts`
-- [X] T036 [US2] Update independent validation for upload/replace/delete and SC-003 evidence in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T027 [US2] Implement `uploadCertificateTemplate` action preconditions for direct upload and valid file in `src/app/dashboard/certificate-types/action.ts`
+- [x] T028 [US2] Implement UUID-per-type file persistence (`/public/pdf-templates/{typeId}/{uuid}.pdf`) in `src/services/templateStorageService.ts`
+- [x] T029 [US2] Implement `replaceActiveTemplate` lifecycle rule (single active template per type) in `src/services/certificateTypeAdminService.ts`
+- [x] T030 [US2] Implement `deleteCertificateTemplate` lifecycle with active-reference checks in `src/services/certificateTypeAdminService.ts`
+- [x] T031 [US2] Update certificate PDF resolution to metadata path with temporary legacy fallback in `src/services/certificatePdfService.ts`
+- [x] T032 [P] [US2] Create template upload/replace component with validation feedback in `src/app/_components/organisms/CertificateTemplateUpload.tsx`
+- [x] T033 [P] [US2] Create template list/history component with archive/delete actions in `src/app/_components/organisms/CertificateTemplateList.tsx`
+- [x] T034 [US2] Integrate template management section into certificate type page in `src/app/dashboard/certificate-types/page.tsx`
+- [x] T035 [US2] Emit telemetry markers for SC-003 valid-attempt denominator in `src/app/dashboard/certificate-types/action.ts` and `src/utils/logger.ts`
+- [x] T036 [US2] Update independent validation for upload/replace/delete and SC-003 evidence in `specs/001-admin-certificate-templates/quickstart.md`
 
 **Checkpoint**: User Story 2 is independently functional and testable
 
@@ -101,13 +101,13 @@
 
 ### Implementation for User Story 3
 
-- [X] T037 [US3] Implement `getTemplateStorageCompatibility` runtime check flow in `src/services/templateStorageService.ts`
-- [X] T038 [US3] Enforce upload blocking and deploy/FTP guidance for `manual_publish` mode in `src/app/dashboard/certificate-types/action.ts`
-- [X] T039 [P] [US3] Create compatibility status and manual publication guidance card in `src/app/_components/organisms/TemplateStorageCompatibilityCard.tsx`
-- [X] T040 [P] [US3] Create legacy backfill status card with cutoff indicators in `src/app/_components/organisms/LegacyBackfillStatusCard.tsx`
-- [X] T041 [US3] Integrate compatibility/backfill cards and blocked-upload UX in `src/app/dashboard/certificate-types/page.tsx`
-- [X] T042 [US3] Expose manual publication checklist copy and fallback state in `src/app/dashboard/certificate-types/page.tsx`
-- [X] T043 [US3] Update independent validation for writable/non-writable host and manual publication evidence in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T037 [US3] Implement `getTemplateStorageCompatibility` runtime check flow in `src/services/templateStorageService.ts`
+- [x] T038 [US3] Enforce upload blocking and deploy/FTP guidance for `manual_publish` mode in `src/app/dashboard/certificate-types/action.ts`
+- [x] T039 [P] [US3] Create compatibility status and manual publication guidance card in `src/app/_components/organisms/TemplateStorageCompatibilityCard.tsx`
+- [x] T040 [P] [US3] Create legacy backfill status card with cutoff indicators in `src/app/_components/organisms/LegacyBackfillStatusCard.tsx`
+- [x] T041 [US3] Integrate compatibility/backfill cards and blocked-upload UX in `src/app/dashboard/certificate-types/page.tsx`
+- [x] T042 [US3] Expose manual publication checklist copy and fallback state in `src/app/dashboard/certificate-types/page.tsx`
+- [x] T043 [US3] Update independent validation for writable/non-writable host and manual publication evidence in `specs/001-admin-certificate-templates/quickstart.md`
 
 **Checkpoint**: User Story 3 is independently functional and testable
 
@@ -117,13 +117,13 @@
 
 **Purpose**: Final quality, consistency, security, and performance checks across all stories
 
-- [X] T044 [P] Align contract details and error codes with implemented actions in `specs/001-admin-certificate-templates/contracts/admin-certificate-management.md`
-- [X] T045 Validate loading/empty/error/success and keyboard/focus behavior across `src/app/dashboard/certificate-types/page.tsx`, `src/app/_components/organisms/CertificateTypeForm.tsx`, `src/app/_components/organisms/CertificateTypeTable.tsx`, `src/app/_components/organisms/CertificateTemplateUpload.tsx`, and `src/app/_components/organisms/CertificateTemplateList.tsx`
-- [X] T046 Harden upload security checks (file signature, path sanitization, server-side size enforcement) in `src/services/templateStorageService.ts` and `src/app/dashboard/certificate-types/action.ts`
-- [X] T047 Validate last-write-wins behavior with reproducible concurrent-operation evidence in `specs/001-admin-certificate-templates/quickstart.md`
-- [X] T048 Run quality gates (`pnpm lint` and `pnpm build`) and record outcomes in `specs/001-admin-certificate-templates/quickstart.md`
-- [X] T049 Record SC-001, SC-003, SC-007, and SC-008 evidence mapping in `specs/001-admin-certificate-templates/quickstart.md`
-- [X] T050 Document migration cutoff runbook (pre-cutoff checks, cutoff-day checks, remediation path) in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T044 [P] Align contract details and error codes with implemented actions in `specs/001-admin-certificate-templates/contracts/admin-certificate-management.md`
+- [x] T045 Validate loading/empty/error/success and keyboard/focus behavior across `src/app/dashboard/certificate-types/page.tsx`, `src/app/_components/organisms/CertificateTypeForm.tsx`, `src/app/_components/organisms/CertificateTypeTable.tsx`, `src/app/_components/organisms/CertificateTemplateUpload.tsx`, and `src/app/_components/organisms/CertificateTemplateList.tsx`
+- [x] T046 Harden upload security checks (file signature, path sanitization, server-side size enforcement) in `src/services/templateStorageService.ts` and `src/app/dashboard/certificate-types/action.ts`
+- [x] T047 Validate last-write-wins behavior with reproducible concurrent-operation evidence in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T048 Run quality gates (`pnpm lint` and `pnpm build`) and record outcomes in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T049 Record SC-001, SC-003, SC-007, and SC-008 evidence mapping in `specs/001-admin-certificate-templates/quickstart.md`
+- [x] T050 Document migration cutoff runbook (pre-cutoff checks, cutoff-day checks, remediation path) in `specs/001-admin-certificate-templates/quickstart.md`
 
 ---
 

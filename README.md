@@ -44,9 +44,9 @@ Before opening a pull request:
 1. Run `pnpm lint`.
 2. Run `pnpm build`.
 3. For performance-sensitive changes, attach measurable evidence (for example,
-	Web Vitals/Lighthouse or API latency metrics).
+   Web Vitals/Lighthouse or API latency metrics).
 4. Confirm UI changes keep consistency across loading, empty, error, and
-	success states on desktop and mobile.
+   success states on desktop and mobile.
 
 ## Migrate Only 0007 (Drizzle Kit)
 
@@ -63,4 +63,5 @@ Arquivos usados nesse fluxo:
 - `drizzle/migrations-only-0007/0007_needy_tag.sql`
 
 Observacao:
+
 - Essa migration isolada usa geracao de UUID sem dependencia de extensoes do Postgres para evitar falha por `gen_random_uuid()` ausente.
