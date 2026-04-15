@@ -64,3 +64,27 @@
 - [ ] CHK033 Is dependence on cPanel permission behavior documented with acceptance boundaries for host variability? [Dependency, Spec §Assumptions, Spec §FR-011]
 - [ ] CHK034 Are identifier and naming expectations aligned across requirement text (`typeId`, UUID path, status states) without schema-level conflicts? [Conflict, Spec §FR-017, Spec §Key Entities]
 - [ ] CHK035 Is an explicit requirement-to-evidence mapping scheme defined for PR traceability and audit reviews? [Traceability, Gap, Spec §NFR-005]
+
+## Post-Analyze Critical Gaps
+
+- [ ] CHK036 Are migration/backfill requirements explicitly defined for transitioning from legacy enum-based type handling to relational certificate type metadata? [Gap, Spec §FR-002, Spec §Assumptions]
+- [ ] CHK037 Is a rollback/recovery requirement defined for partial migration failures involving type or template metadata? [Recovery, Gap, Spec §Assumptions]
+- [ ] CHK038 Are backward-compatibility requirements explicit for previously issued certificates after introducing metadata-driven template resolution? [Consistency, Gap, Spec §Assumptions]
+- [ ] CHK039 Does the specification define deterministic rules for last-write-wins under distributed concurrent writes (retries, race windows, clock skew)? [Clarity, Spec §FR-016]
+- [ ] CHK040 Is it explicit whether last-write-wins applies uniformly to create, update, archive, and delete operations? [Ambiguity, Spec §FR-016]
+- [ ] CHK041 Is the denominator for "valid template upload attempts" in SC-003 explicitly defined to support objective measurement? [Measurability, Spec §SC-003]
+- [ ] CHK042 Are telemetry/evidence requirements specified for measuring SC-001 completion time end-to-end? [Gap, Measurability, Spec §SC-001, Spec §NFR-005]
+- [ ] CHK043 Are telemetry/evidence requirements specified for measuring SC-007 concurrent-resolution outcomes objectively? [Gap, Measurability, Spec §SC-007, Spec §NFR-005]
+- [ ] CHK044 Is requirement language consistent between "configured public template location" (FR-007) and fixed UUID path (FR-017)? [Conflict, Spec §FR-007, Spec §FR-017]
+- [ ] CHK045 Are acceptance criteria mapped to explicit PR evidence artifacts (logs, metrics, screenshots) in requirement text, not only in process guidance? [Traceability, Gap, Spec §NFR-005]
+
+## Delta Focus: Migration, Backfill, and Cutoff
+
+- [ ] CHK046 Are the exact inclusion criteria for "legacy records required by the feature" explicitly specified to bound backfill scope? [Completeness, Spec §FR-018, Spec §SC-008]
+- [ ] CHK047 Are requirements defined for unresolved legacy records exactly at cutoff time (allowed behavior, error contract, and remediation expectation)? [Coverage, Gap, Spec §FR-019, Spec §Edge Cases]
+- [ ] CHK048 Is incremental backfill progress defined with objective calculation rules (numerator, denominator, and source of truth)? [Clarity, Spec §FR-019, Spec §SC-008]
+- [ ] CHK049 Is cutoff governance specified (owner, timezone basis, and change-control/audit expectation)? [Gap, Spec §FR-019]
+- [ ] CHK050 Are fallback-temporary rules consistent between functional requirements and assumptions, including no post-cutoff implicit exceptions? [Consistency, Spec §FR-018, Spec §FR-019, Spec §Assumptions]
+- [ ] CHK051 Are recovery requirements defined for the case where cutoff is reached before full backfill completion? [Recovery, Gap, Spec §FR-019, Spec §SC-008]
+- [ ] CHK052 Is the active-reference definition reused consistently in migration lifecycle decisions to avoid conflicts with archive/delete policies? [Consistency, Spec §FR-020, Spec §FR-005, Spec §FR-010]
+- [ ] CHK053 Can SC-008 be objectively verified with required evidence artifacts tied to cutoff timestamp and final backfill state? [Measurability, Spec §SC-008, Spec §NFR-005]

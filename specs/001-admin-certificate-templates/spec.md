@@ -14,6 +14,11 @@
 - Q: Quais formatos e limite de tamanho devem ser aceitos no upload de template? → A: Apenas PDF com tamanho maximo de 10 MB.
 - Q: Como tratar edicoes/delecoes concorrentes entre admins? → A: Last-write-wins sem aviso, onde a ultima gravacao bem-sucedida prevalece.
 - Q: Qual padrao de nome e caminho deve ser usado para salvar templates? → A: Usar UUID em pasta por tipo, no padrao /public/pdf-templates/{typeId}/{uuid}.pdf.
+- Q: Qual estrategia de migracao/compatibilidade para dados legados? → A: Usar fallback legado temporario com backfill incremental obrigatorio e data de corte para remover fallback.
+- Q: Como definir referencia ativa para bloqueio de exclusao definitiva? → A: Qualquer registro de certificado, independente de status, ou solicitacao pendente que aponte para o tipo/template.
+- Q: O caminho de armazenamento deve ser fixo ou configuravel em ambiente gravavel? → A: Caminho fixo em ambiente gravavel no padrao /public/pdf-templates/{typeId}/{uuid}.pdf.
+- Q: Quais campos sao obrigatorios no cadastro de certificate type? → A: name obrigatorio; slug auto-gerado normalizado e editavel antes de salvar; description e legacyTokenType opcionais.
+- Q: Como definir o denominador de valid template upload attempts em SC-003? → A: Contar somente requisicoes autenticadas em modo direct_upload, com certificate type existente e arquivo valido (PDF <= 10 MB).
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -29,7 +34,7 @@ As an admin, I can create, edit, archive, and permanently remove certificate typ
 
 1. **Given** an authenticated admin is on the dashboard, **When** they create a new certificate type with valid data, **Then** the new type appears in the list and is selectable for future template assignment.
 2. **Given** an existing certificate type, **When** the admin edits its details and saves, **Then** the updated values are shown consistently in the management list.
-3. **Given** a certificate type currently used by existing certificates, **When** the admin requests deletion, **Then** the system archives or inactivates the type and preserves existing certificate references.
+3. **Given** a certificate type referenced by any certificate record or pending request, **When** the admin requests deletion, **Then** the system archives or inactivates the type and preserves existing references.
 4. **Given** a certificate type without active references, **When** the admin confirms deletion, **Then** the system permanently removes the type.
 5. **Given** two admins update the same certificate type nearly at the same time, **When** both save successfully, **Then** the latest successful save becomes the persisted state.
 
@@ -47,7 +52,7 @@ As an admin, I can upload, replace, archive, and permanently remove templates as
 
 1. **Given** a certificate type exists, **When** the admin uploads a valid PDF template up to 10 MB, **Then** the template is stored as `/public/pdf-templates/{typeId}/{uuid}.pdf` and linked to that type.
 2. **Given** a type with an active template, **When** the admin uploads a replacement template, **Then** the new template becomes available for future generation and the old one is no longer active.
-3. **Given** a template with active references, **When** the admin requests deletion, **Then** the system archives or inactivates the template and keeps historical references intact.
+3. **Given** a template referenced by any certificate record or pending request, **When** the admin requests deletion, **Then** the system archives or inactivates the template and keeps historical references intact.
 4. **Given** a template without active references, **When** the admin confirms deletion, **Then** the template is permanently removed.
 
 ---
@@ -62,7 +67,7 @@ As an admin, I can see whether the hosting environment (including cPanel-based d
 
 **Acceptance Scenarios**:
 
-1. **Given** the hosting environment allows writing to the configured public template path, **When** the admin opens template settings, **Then** the system displays that direct upload is supported.
+1. **Given** the hosting environment allows writing to `/public/pdf-templates`, **When** the admin opens template settings, **Then** the system displays that direct upload is supported.
 2. **Given** the hosting environment does not allow direct writes, **When** the admin attempts to add a template, **Then** the system blocks direct upload and instructs manual publication via deploy or FTP.
 3. **Given** direct upload is blocked, **When** the admin opens compatibility guidance, **Then** the system displays a clear manual publication checklist for deploy/FTP flow.
 
@@ -70,24 +75,25 @@ As an admin, I can see whether the hosting environment (including cPanel-based d
 
 - What happens when an admin tries to create a certificate type with a duplicate name that differs only by letter casing?
 - How does the system behave when an uploaded template is invalid, corrupted, non-PDF, or exceeds 10 MB?
-- What happens when deletion is requested for a type or template that is currently referenced by active certificates?
+- What happens when deletion is requested for a type or template referenced by certificate records and/or pending requests?
 - How does the system handle missing write permission, storage quota exhaustion, or path unavailability in cPanel environments?
 - Concurrent updates or deletions by multiple admins follow last-write-wins; the latest successful operation defines the final state.
+- What happens if incremental backfill is not complete when the configured legacy fallback cutoff date is reached?
 
 ## Requirements _(mandatory)_
 
 ### Functional Requirements
 
 - **FR-001**: The system MUST provide an admin-only management area in the dashboard for certificate type and template operations.
-- **FR-002**: The system MUST allow admins to create certificate types with required identifying information.
+- **FR-002**: The system MUST require `name` when creating certificate types, auto-generate a normalized `slug` by default (editable before save), and treat `description` and `legacyTokenType` as optional fields.
 - **FR-003**: The system MUST prevent duplicate certificate type names within the same organization scope.
 - **FR-004**: The system MUST allow admins to edit certificate type information.
-- **FR-005**: The system MUST archive or inactivate certificate types with active references and allow permanent deletion only when there are no active references.
+- **FR-005**: The system MUST archive or inactivate certificate types when active references exist and allow permanent deletion only when there are no active references.
 - **FR-006**: The system MUST allow admins to upload templates and associate each template with a certificate type.
-- **FR-007**: The system MUST store uploaded templates in the configured public template location when direct write support is available.
+- **FR-007**: The system MUST store uploaded templates in `/public/pdf-templates/{typeId}/{uuid}.pdf` when direct write support is available.
 - **FR-008**: The system MUST validate uploaded templates before saving and provide actionable error messages when validation fails.
 - **FR-009**: The system MUST allow admins to replace an existing template linked to a certificate type.
-- **FR-010**: The system MUST archive or inactivate templates with active references and allow permanent deletion only when there are no active references.
+- **FR-010**: The system MUST archive or inactivate templates when active references exist and allow permanent deletion only when there are no active references.
 - **FR-011**: The system MUST assess and display whether the deployment environment supports writing templates to the public folder (including cPanel-hosted deployments).
 - **FR-012**: The system MUST block in-dashboard template upload and provide manual publication guidance via deploy/FTP when direct writes to the public folder are not supported.
 - **FR-013**: The system MUST restrict all certificate type and template management actions to authorized admins.
@@ -95,6 +101,10 @@ As an admin, I can see whether the hosting environment (including cPanel-based d
 - **FR-015**: The system MUST accept template uploads only in PDF format with a maximum file size of 10 MB and reject any other file with actionable validation feedback.
 - **FR-016**: The system MUST apply last-write-wins for concurrent update or delete operations on the same certificate type or template, without conflict prompts.
 - **FR-017**: The system MUST store each uploaded template using a generated UUID in a per-type directory following the path pattern `/public/pdf-templates/{typeId}/{uuid}.pdf`.
+- **FR-018**: The system MUST provide temporary legacy fallback resolution for pre-existing certificate/template records while incremental metadata backfill is in progress.
+- **FR-019**: The system MUST track incremental backfill progress and enforce a configured cutoff date after which legacy fallback is disabled.
+- **FR-020**: For deletion lifecycle decisions, active references MUST include any certificate record regardless of status and any pending request that points to the target certificate type or template.
+- **FR-021**: For measurement purposes, a valid template upload attempt MUST be an authenticated request in `direct_upload` mode where the target certificate type exists and the uploaded file passes PDF and size validation (`<= 10 MB`).
 
 ### Non-Functional Requirements _(mandatory)_
 
@@ -106,7 +116,7 @@ As an admin, I can see whether the hosting environment (including cPanel-based d
 
 ### Key Entities _(include if feature involves data)_
 
-- **Certificate Type**: Represents an admin-managed category of certificate, including name, lifecycle status (active, inactive, archived, deleted), and template linkage rules.
+- **Certificate Type**: Represents an admin-managed category of certificate, including required `name`, normalized `slug` (auto-generated and editable before save), optional `description`, optional `legacyTokenType`, lifecycle status (active, inactive, archived, deleted), and template linkage rules.
 - **Template Asset**: Represents an uploaded certificate template with identity, association to a certificate type, lifecycle status (active, inactive, archived, deleted), reference usage, storage location mode, file format, file size, and deterministic storage path.
 - **Storage Compatibility Status**: Represents the evaluated capability of the current hosting environment to support direct writes to the public template location.
 - **Fallback Option**: Represents an approved alternative path used when direct public-folder writes are unavailable.
@@ -117,11 +127,12 @@ As an admin, I can see whether the hosting environment (including cPanel-based d
 
 - **SC-001**: At least 95% of admins can create a new certificate type and attach its first template in under 3 minutes on first attempt.
 - **SC-002**: 100% of unauthorized users are prevented from performing certificate type or template management actions.
-- **SC-003**: At least 99% of valid template upload attempts complete successfully in environments that support direct writes.
+- **SC-003**: At least 99% of valid template upload attempts (authenticated request in `direct_upload` mode, existing target certificate type, valid PDF `<= 10 MB`) complete successfully in environments that support direct writes.
 - **SC-004**: In environments without direct public-folder write support, 100% of blocked upload attempts show deploy/FTP manual publication guidance before the workflow ends.
 - **SC-005**: Within the first month after release, support requests related to "cannot manage certificate templates" decrease by at least 40% compared with the previous month.
 - **SC-006**: For 100% of deletion requests involving active references, the target is archived or inactivated without breaking historical certificate integrity.
 - **SC-007**: In controlled concurrent-operation tests, 100% of simultaneous update/delete cases resolve to the latest successful write as the persisted final state.
+- **SC-008**: 100% of legacy records required by the feature are backfilled before the configured fallback cutoff date.
 
 ## Assumptions
 
@@ -132,3 +143,4 @@ As an admin, I can see whether the hosting environment (including cPanel-based d
 - Template upload policy for v1 accepts only PDF files up to 10 MB.
 - For v1 fallback, manual template publication via deploy/FTP is the only supported path when /public is not writable.
 - For writable environments, template files are persisted only using UUID-based filenames inside per-type folders.
+- Legacy fallback is temporary and remains enabled only until the configured cutoff date for backfill completion.

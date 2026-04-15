@@ -47,3 +47,20 @@ Before opening a pull request:
 	Web Vitals/Lighthouse or API latency metrics).
 4. Confirm UI changes keep consistency across loading, empty, error, and
 	success states on desktop and mobile.
+
+## Migrate Only 0007 (Drizzle Kit)
+
+Para aplicar apenas a migration `0007_needy_tag` com Drizzle Kit:
+
+```bash
+export DATABASE_URL='postgres://...'
+pnpm run drizzle:migrate:only-0007
+```
+
+Arquivos usados nesse fluxo:
+
+- `drizzle.config.only-0007.ts`
+- `drizzle/migrations-only-0007/0007_needy_tag.sql`
+
+Observacao:
+- Essa migration isolada usa geracao de UUID sem dependencia de extensoes do Postgres para evitar falha por `gen_random_uuid()` ausente.

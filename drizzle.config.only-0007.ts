@@ -1,0 +1,17 @@
+import { config } from 'dotenv';
+import { defineConfig } from 'drizzle-kit';
+
+config({
+  path: '.env.local',
+});
+
+export default defineConfig({
+  out: './drizzle/migrations-only-0007',
+  dialect: 'postgresql',
+  migrations: {
+    table: 'migrations',
+  },
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+});

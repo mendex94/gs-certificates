@@ -5,23 +5,24 @@
 
 ## Summary
 
-Deliver admin-only management for certificate types and templates in dashboard,
-including: create/update/archive/delete lifecycle, upload and replacement of
-PDF templates (max 10 MB), UUID-based storage path per type, runtime detection
-of write capability in `/public/pdf-templates`, manual deploy/FTP fallback for
-non-writable hosts, and last-write-wins behavior for concurrent writes.
+Implementar gestao administrativa de tipos e templates de certificados no dashboard,
+incluindo CRUD com ciclo de vida (archive/inactivate/delete), upload de PDF
+(`<= 10 MB`), armazenamento fixo em `/public/pdf-templates/{typeId}/{uuid}.pdf`
+quando houver escrita direta, fallback manual via deploy/FTP em ambientes sem
+escrita, concorrencia last-write-wins, e migracao de legado com fallback
+temporario, backfill incremental obrigatorio e data de corte.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5, Node.js 20, Next.js 14.2.4  
 **Primary Dependencies**: Next.js App Router, React 18, zsa, zod, drizzle-orm, postgres, pdf-lib, uuid  
-**Storage**: PostgreSQL for metadata and lifecycle state; filesystem in `/public/pdf-templates` for writable hosts  
-**Testing**: `pnpm lint`, `pnpm build`, and reproducible manual validation scenarios captured in `quickstart.md`  
-**Target Platform**: Linux server deployments, including cPanel-managed hosts  
-**Project Type**: Full-stack web application (single Next.js project)  
-**Performance Goals**: Admin metadata operations p95 <= 300ms; upload validation feedback p95 <= 5s for PDF <= 10 MB; preserve constitution Web Vitals targets (LCP p75 <= 2.5s, INP p75 <= 200ms)  
-**Constraints**: PDF-only uploads <= 10 MB; block upload when `/public` is not writable and guide manual publish; last-write-wins on concurrent writes; avoid hardcoded domain strings by using constants/enums  
-**Scale/Scope**: Admin dashboard feature affecting certificate type/template catalog, expected tens of types and versions, with backward compatibility for existing certificate records
+**Storage**: PostgreSQL para metadados e ciclo de vida; filesystem em `/public/pdf-templates` para modo `direct_upload`  
+**Testing**: `pnpm lint`, `pnpm build` e evidencias reproduziveis de cenarios definidos em `quickstart.md`  
+**Target Platform**: Linux server, incluindo hospedagens cPanel  
+**Project Type**: Aplicacao web full-stack (single Next.js project)  
+**Performance Goals**: Operacoes admin p95 `<= 300ms`; feedback de validacao/upload p95 `<= 5s`; preservar metas de LCP p75 `<= 2.5s` e INP p75 `<= 200ms`  
+**Constraints**: Upload somente PDF `<= 10 MB`; caminho de escrita fixa no modo gravavel; bloqueio de upload em modo nao gravavel; referencias ativas incluem qualquer certificado (qualquer status) e solicitacao pendente; concorrencia last-write-wins; fallback legado temporario ate cutoff  
+**Scale/Scope**: Feature administrativa para dezenas de tipos/templates com retrocompatibilidade durante janela de migracao
 
 ## Constitution Check
 
@@ -29,20 +30,16 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 Pre-Phase 0 Gate Result: PASS
 
-- [x] Qualidade de codigo: plano usa camada repository/service existente,
-      reforca tipagem e inclui quality gates `pnpm lint` e `pnpm build`.
-- [x] Consistencia de UX: fluxo inclui estados loading/vazio/erro/sucesso,
-      responsividade e acessibilidade minima no dashboard admin.
-- [x] Performance: metas mensuraveis de latencia p95 e feedback de upload
-      foram definidas para fluxos criticos.
-- [x] Risco e regressao: politica de lifecycle, compatibilidade de storage e
-      evidencia obrigatoria em quickstart foram definidos.
+- [x] Qualidade de codigo: manter arquitetura existente (actions -> services -> repositories), tipagem forte e gates `pnpm lint`/`pnpm build`.
+- [x] Consistencia de UX: fluxos admin devem cobrir loading, vazio, erro e sucesso com responsividade e acessibilidade minima.
+- [x] Performance: metas mensuraveis definidas para latencia de operacoes e feedback de upload.
+- [x] Risco e regressao: estrategia explicita de migracao segura, fallback legado temporario, backfill incremental, cutoff e evidencias obrigatorias.
 
 Post-Phase 1 Re-check Result: PASS
 
-- [x] Artefatos de pesquisa e design criados (`research.md`, `data-model.md`,
-      `contracts/`, `quickstart.md`) sem violacoes constitucionais.
-- [x] Nenhuma excecao temporaria de principio foi necessaria.
+- [x] Artefatos de design atualizados com decisoes de migracao/retrocompatibilidade e criterios de medicao.
+- [x] Contratos e modelo de dados refletem regras fechadas de referencia ativa, caminho fixo e denominador de SC-003.
+- [x] Nenhuma excecao formal da constituicao foi necessaria.
 
 ## Project Structure
 
@@ -67,42 +64,45 @@ src/
 │   ├── dashboard/
 │   │   ├── _admin-auth.ts
 │   │   ├── action.ts
-│   │   └── certificate-types/            # new module for admin CRUD/actions
+│   │   └── certificate-types/
+│   │       ├── action.ts
+│   │       └── page.tsx
 │   ├── _components/
-│   │   └── organisms/                    # reusable admin forms/tables
+│   │   └── organisms/
+│   │       ├── CertificateTypeForm.tsx
+│   │       ├── CertificateTypeTable.tsx
+│   │       ├── CertificateTemplateUpload.tsx
+│   │       ├── CertificateTemplateList.tsx
+│   │       └── TemplateStorageCompatibilityCard.tsx
 │   └── _lib/
-│       └── validation-shemas/            # zod schemas for server actions
+│       └── validation-shemas/
+│           └── certificate-management.ts
 ├── constants/
-│   └── certificate-pdf-fields.ts
+│   └── certificate-management.ts
 ├── dtos/
-│   ├── certificate.ts
-│   ├── certificate-type.ts               # new
-│   └── certificate-template.ts           # new
+│   ├── certificate-type.ts
+│   └── certificate-template.ts
 ├── lib/
-│   ├── db/
-│   │   ├── schema.ts
-│   │   └── index.ts
-│   └── zsa-procedures.ts
+│   └── db/
+│       └── schema.ts
 ├── repositories/
-│   ├── certificatesRepository.ts
-│   ├── certificateTypesRepository.ts     # new
-│   └── certificateTemplatesRepository.ts # new
+│   ├── certificateTypesRepository.ts
+│   └── certificateTemplatesRepository.ts
 └── services/
-    ├── certificatePdfService.ts
-    └── certificateTypeAdminService.ts    # new
+      ├── certificateTypeAdminService.ts
+      ├── templateStorageService.ts
+      └── templateBackfillService.ts
 
 drizzle/
-└── migrations/                           # new migration(s) for type/template metadata
+└── migrations/
 
 public/
-└── pdf-templates/                        # `/public/pdf-templates/{typeId}/{uuid}.pdf`
+└── pdf-templates/
 ```
 
-**Structure Decision**: Keep the existing single Next.js application and extend
-the current layering (server actions -> services -> repositories -> db schema)
-instead of introducing a separate backend API project.
+**Structure Decision**: manter o projeto unico em Next.js e estender os modulos
+existentes por composicao, sem introduzir novo backend separado.
 
 ## Complexity Tracking
 
-No constitution violations or exceptional complexity waivers are required at
-planning stage.
+Sem violacoes constitucionais ou waiver de complexidade nesta fase.

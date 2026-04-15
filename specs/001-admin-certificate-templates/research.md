@@ -1,49 +1,65 @@
 # Research: Admin Certificate Type and Template Management
 
-## Decision 1: Model certificate types and templates as relational entities with legacy compatibility
+## Decision 1: Modelar tipos/templates em entidades relacionais com compatibilidade legada temporaria
 
-- Decision: Add dedicated `certificate_types` and `certificate_templates` relational entities, with optional `legacyTokenType` mapping for current enum-based flows.
-- Rationale: Admin-managed types/templates need lifecycle, validation, and reference checks that are difficult to guarantee with hardcoded enums and static file names.
+- Decision: Criar entidades `certificate_types` e `certificate_templates`, mantendo fallback legado temporario enquanto o backfill incremental nao termina.
+- Rationale: A feature exige lifecycle, associacao, rastreabilidade e regras de exclusao que nao cabem em enum hardcoded apenas.
 - Alternatives considered:
-  - Keep only `pgEnum` values and update code on each new type: rejected because each new type would require code deployment/migration.
-  - Store type/template config as JSON in filesystem: rejected because it weakens transactional integrity and auditability.
+  - Manter apenas enum estatico e alterar codigo a cada tipo novo: rejeitado por alto acoplamento e baixa escalabilidade.
+  - Persistir metadados apenas em arquivo/JSON: rejeitado por fragilidade transacional e auditoria.
 
-## Decision 2: Use runtime storage compatibility detection for public folder writes
+## Decision 2: Definir estrategia de migracao segura com data de corte
 
-- Decision: Detect write capability for `/public/pdf-templates` at runtime with filesystem access and controlled write checks, then expose status in admin UI.
-- Rationale: cPanel hosts vary in permissions and quotas; runtime verification prevents false positives and failed uploads.
+- Decision: Adotar fallback legado temporario + backfill incremental obrigatorio + cutoff para desligar fallback.
+- Rationale: Atende constituicao para compatibilidade retroativa/plano seguro sem travar entrega em migracao bloqueante unica.
 - Alternatives considered:
-  - Static environment flag only: rejected because drift between config and real host permissions is common.
-  - Attempt upload directly and fail late: rejected due to poor UX and avoidable retries.
+  - Migracao bloqueante completa antes de liberar feature: rejeitado por risco operacional e indisponibilidade.
+  - Fallback legado permanente: rejeitado por perpetuar complexidade e ambiguidade de comportamento.
 
-## Decision 3: Enforce strict upload validation on server side
+## Decision 3: Fixar caminho de armazenamento em modo gravavel
 
-- Decision: Accept only PDF files up to 10 MB, validate MIME/extension/size, and parse document with `pdf-lib` before persistence.
-- Rationale: Server-side validation is required for security and consistency; client-side checks alone are bypassable.
+- Decision: Em `direct_upload`, persistir sempre em `/public/pdf-templates/{typeId}/{uuid}.pdf`.
+- Rationale: Remove conflito entre caminho configuravel e caminho fixo, reduz erro operacional e facilita observabilidade.
 - Alternatives considered:
-  - Client-side validation only: rejected for security reasons.
-  - Extension-only validation: rejected because file extension can be spoofed.
+  - Caminho totalmente configuravel: rejeitado por aumentar variacao de deploy e risco de inconsistencias.
+  - Nome original de arquivo: rejeitado por colisao e risco de sanitizacao.
 
-## Decision 4: Apply lifecycle-first deletion policy with last-write-wins concurrency
+## Decision 4: Definir referencia ativa de forma conservadora
 
-- Decision: When active references exist, convert delete requests into archive/inactivate transitions; allow hard delete only without active references. Keep concurrent writes as last-write-wins.
-- Rationale: Preserves historical integrity while matching clarified behavior and minimizing synchronization complexity.
+- Decision: Referencia ativa inclui qualquer registro de certificado (qualquer status) e qualquer solicitacao pendente apontando para tipo/template.
+- Rationale: Preserva integridade historica e evita hard delete destrutivo de entidades ainda referenciadas.
 - Alternatives considered:
-  - Force delete with cascade: rejected because it risks historical data loss.
-  - Optimistic conflict prompts: rejected because clarified requirement is last-write-wins without prompts.
+  - Considerar apenas certificados recentes: rejeitado por risco de apagar historico relevante.
+  - Permitir override para forcar exclusao: rejeitado por alto risco de corrupcao de trilha historica.
 
-## Decision 5: Persist templates with UUID path per type
+## Decision 5: Validacao de upload estrita no backend
 
-- Decision: Save uploaded templates under `/public/pdf-templates/{typeId}/{uuid}.pdf` and store relative path metadata.
-- Rationale: Prevents filename collisions, keeps deterministic organization per type, and supports safe replacement/versioning.
+- Decision: Aceitar somente PDF `<= 10 MB`, validar tipo/tamanho no servidor antes de persistir arquivo.
+- Rationale: Controle de seguranca e consistencia deve ser inescapavel por cliente.
 - Alternatives considered:
-  - Original filename: rejected due to collision and unsafe naming risk.
-  - Slug + timestamp naming: rejected because still collision-prone under concurrency.
+  - Validacao apenas no frontend: rejeitado por ser bypassavel.
+  - Validacao por extensao apenas: rejeitado por spoofing de arquivo.
 
-## Decision 6: Expose feature operations via server actions in dashboard module
+## Decision 6: Concorrencia last-write-wins sem prompt de conflito
 
-- Decision: Implement admin operations as authenticated `zsa` server actions in dashboard scope, reusing repository/service layering.
-- Rationale: Matches existing project architecture and avoids introducing parallel API patterns.
+- Decision: Operacoes concorrentes de update/delete seguem last-write-wins conforme clarificacao.
+- Rationale: Requisito explicito do produto, com menor custo de UX versus locking/prompt.
 - Alternatives considered:
-  - New REST route handlers for all operations: rejected as unnecessary architectural split for current codebase.
-  - Direct DB calls from UI server components: rejected due to layering and testability concerns.
+  - Lock pessimista: rejeitado por piorar throughput e UX.
+  - Prompt de conflito otimista: rejeitado por divergir da regra definida.
+
+## Decision 7: Definir denominador de SC-003 de forma auditavel
+
+- Decision: "Valid template upload attempt" = requisicao autenticada em `direct_upload`, com `certificateType` existente e arquivo PDF valido `<= 10 MB`.
+- Rationale: Permite medicao objetiva e comparavel entre ambientes gravaveis.
+- Alternatives considered:
+  - Contar toda submissao de UI: rejeitado por ruido e baixa confiabilidade de metrica.
+  - Contar apenas apos inicio de escrita em disco: rejeitado por esconder falhas de precondicao relevantes.
+
+## Decision 8: Expor operacoes como server actions no modulo dashboard
+
+- Decision: Implementar interface via server actions autenticadas com `zsa` no escopo dashboard admin.
+- Rationale: Mantem padrao arquitetural atual e reduz fragmentacao de integração.
+- Alternatives considered:
+  - Criar API REST separada para tudo: rejeitado por overhead arquitetural sem beneficio direto.
+  - Acesso direto ao banco na camada de pagina: rejeitado por perda de separacao e testabilidade.

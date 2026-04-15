@@ -1,9 +1,11 @@
 'use client';
 
 import { getDashboardStats } from './action';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
+import { Button } from '@components/ui/button';
 import { Skeleton } from '@components/ui/skeleton';
-import { FileText, Users, UserCheck, TrendingUp } from 'lucide-react';
+import { FileText, Users, UserCheck, TrendingUp, Settings } from 'lucide-react';
 import { useServerActionQuery } from '../_lib/hooks/server-action-hooks';
 
 export default function DashboardPage() {
@@ -160,6 +162,26 @@ export default function DashboardPage() {
               <p className="text-muted-foreground mt-1 text-sm">
                 Certificados por usuário ativo
               </p>
+            </CardContent>
+          </Card>
+
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5 text-slate-700" />
+                Administracao de tipos e templates
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <p className="text-muted-foreground text-sm">
+                Gerencie certificate types, upload/substituicao de templates e
+                compatibilidade de armazenamento.
+              </p>
+              <Button asChild>
+                <Link href="/dashboard/certificate-types">
+                  Abrir gestao de templates
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         </div>

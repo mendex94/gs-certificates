@@ -12,6 +12,7 @@
     "prettier": "prettier --write */**/*.{js,jsx,json,ts,tsx,scss,css,md}",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:migrate:only-0007": "drizzle-kit migrate --config drizzle.config.only-0007.ts",
     "drizzle:studio": "drizzle-kit studio"
   },
   "dependencies": {
