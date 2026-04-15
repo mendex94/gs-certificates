@@ -1,3 +1,5 @@
+import { TELEMETRY_EVENT } from '@/constants/certificate-management';
+
 type TLogLevel = 'info' | 'error';
 
 type TLogPayload = {
@@ -56,4 +58,17 @@ export const logError = (
       },
     }),
   );
+};
+
+export const logTemplateUploadAttempt = (input: {
+  correlationId: string;
+  mode: string;
+  certificateTypeId: string;
+  denominatorEligible: boolean;
+}) => {
+  logInfo(TELEMETRY_EVENT.TEMPLATE_UPLOAD_ATTEMPT, input.correlationId, {
+    mode: input.mode,
+    certificateTypeId: input.certificateTypeId,
+    denominatorEligible: input.denominatorEligible,
+  });
 };

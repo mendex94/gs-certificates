@@ -1,5 +1,8 @@
 .next
 .cache
+dist
+build
+coverage
 pnpm-lock.yaml
 public
 node_modules

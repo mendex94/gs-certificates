@@ -1,9 +1,14 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, or, sql } from 'drizzle-orm';
 import type { DB } from '@/lib/db';
 import { db } from '@/lib/db';
-import { certificates } from '@/lib/db/schema';
+import {
+  certificates,
+  certificatePendingRequests,
+  certificateTypes,
+} from '@/lib/db/schema';
 import { CertificateDTO } from '@/dtos/certificate';
 import { ICertificatesRepository } from '.';
+import { TEMPLATE_REFERENCE_REQUEST_STATUS } from '@/constants/certificate-management';
 
 export class CertificatesRepository implements ICertificatesRepository {
   private db: DB;
@@ -83,5 +88,67 @@ export class CertificatesRepository implements ICertificatesRepository {
       });
 
     return !!updatedCertificate;
+  }
+
+  async getActiveReferenceSummary(input: {
+    certificateTypeId: string;
+    templateId?: string;
+  }) {
+    const [certificateTypeRow] = await this.db
+      .select({ legacyTokenType: certificateTypes.legacyTokenType })
+      .from(certificateTypes)
+      .where(eq(certificateTypes.id, input.certificateTypeId))
+      .limit(1);
+
+    const certificateReferenceFilters = [
+      eq(certificates.certificateTypeId, input.certificateTypeId),
+    ];
+
+    certificateTypeRow?.legacyTokenType
+      ? certificateReferenceFilters.push(
+          eq(certificates.type, certificateTypeRow.legacyTokenType),
+        )
+      : null;
+
+    input.templateId
+      ? certificateReferenceFilters.push(
+          eq(certificates.templateId, input.templateId),
+        )
+      : null;
+
+    const [certificateCountRow] = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(certificates)
+      .where(or(...certificateReferenceFilters));
+
+    const pendingReferenceFilters = [
+      eq(certificatePendingRequests.certificateTypeId, input.certificateTypeId),
+    ];
+
+    input.templateId
+      ? pendingReferenceFilters.push(
+          eq(certificatePendingRequests.templateId, input.templateId),
+        )
+      : null;
+
+    const [pendingCountRow] = await this.db
+      .select({ count: sql<number>`count(*)` })
+      .from(certificatePendingRequests)
+      .where(
+        and(
+          eq(
+            certificatePendingRequests.status,
+            TEMPLATE_REFERENCE_REQUEST_STATUS.PENDING,
+          ),
+          or(...pendingReferenceFilters),
+        ),
+      );
+
+    return {
+      referencedCertificateCountAnyStatus: Number(
+        certificateCountRow?.count || 0,
+      ),
+      pendingRequestCount: Number(pendingCountRow?.count || 0),
+    };
   }
 }

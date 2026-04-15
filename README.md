@@ -34,3 +34,34 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Engineering Constitution
+
+Project governance is defined in `.specify/memory/constitution.md`.
+
+Before opening a pull request:
+
+1. Run `pnpm lint`.
+2. Run `pnpm build`.
+3. For performance-sensitive changes, attach measurable evidence (for example,
+   Web Vitals/Lighthouse or API latency metrics).
+4. Confirm UI changes keep consistency across loading, empty, error, and
+   success states on desktop and mobile.
+
+## Migrate Only 0007 (Drizzle Kit)
+
+Para aplicar apenas a migration `0007_needy_tag` com Drizzle Kit:
+
+```bash
+export DATABASE_URL='postgres://...'
+pnpm run drizzle:migrate:only-0007
+```
+
+Arquivos usados nesse fluxo:
+
+- `drizzle.config.only-0007.ts`
+- `drizzle/migrations-only-0007/0007_needy_tag.sql`
+
+Observacao:
+
+- Essa migration isolada usa geracao de UUID sem dependencia de extensoes do Postgres para evitar falha por `gen_random_uuid()` ausente.

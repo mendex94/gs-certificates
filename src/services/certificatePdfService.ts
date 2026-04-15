@@ -10,6 +10,9 @@ import {
 } from '@/constants/certificate-pdf-fields';
 import type { Products } from '@/dtos/certificate';
 import type { TokenType } from '@/repositories/userRepository';
+import { CertificateTemplatesRepository } from '@/repositories/certificateTemplatesRepository';
+import { CERTIFICATE_MANAGEMENT_ERRORS } from '@/constants/certificate-management';
+import { isLegacyFallbackCutoffReached } from '@/utils/env';
 
 type TGenerateCertificatePdfInput = {
   certificateNumber: string;
@@ -22,7 +25,47 @@ type TGenerateCertificatePdfInput = {
 };
 
 export class CertificatePdfService {
+  private certificateTemplatesRepository: CertificateTemplatesRepository;
+
+  constructor() {
+    this.certificateTemplatesRepository = new CertificateTemplatesRepository();
+  }
+
+  private async loadTemplateFromMetadata(type: TokenType) {
+    const activeTemplateByLegacyType =
+      await this.certificateTemplatesRepository.findLatestActiveByLegacyTokenType(
+        type,
+      );
+
+    if (!activeTemplateByLegacyType) {
+      return null;
+    }
+
+    const normalizedStoragePath = activeTemplateByLegacyType.storagePath
+      .replace(/^\/public\//, '')
+      .replace(/^\//, '');
+    const absolutePath = join(process.cwd(), 'public', normalizedStoragePath);
+
+    try {
+      return await readFile(absolutePath);
+    } catch {
+      return null;
+    }
+  }
+
   private async loadTemplateByType(type: TokenType) {
+    const metadataTemplate = await this.loadTemplateFromMetadata(type);
+
+    if (metadataTemplate) {
+      return metadataTemplate;
+    }
+
+    if (isLegacyFallbackCutoffReached()) {
+      throw new Error(
+        CERTIFICATE_MANAGEMENT_ERRORS.BACKFILL_INCOMPLETE_AT_CUTOFF,
+      );
+    }
+
     const templateFileName = CERTIFICATE_PDF_TEMPLATE_FILES[type];
     const templatePath = join(process.cwd(), 'public', templateFileName);
 

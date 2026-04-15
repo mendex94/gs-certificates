@@ -1,9 +1,14 @@
 .next
 .cache
+dist
+build
+coverage
 public
 node_modules
 next-env.d.ts
 next.config.ts
 pnpm-lock.yaml
+package-lock.json
+yarn.lock
 commitlint.config.js
 src/app/_components/ui
